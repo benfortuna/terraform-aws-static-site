@@ -5,7 +5,7 @@ data "aws_iam_policy_document" "bucket_policy" {
     sid = "1"
     effect = "Allow"
     principals {
-      identifiers = [""]
+      identifiers = [aws_cloudfront_origin_access_identity.oai.iam_arn]
       type        = "AWS"
     }
     actions = ["s3:GetObject"]
