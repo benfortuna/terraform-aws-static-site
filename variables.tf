@@ -25,11 +25,19 @@ variable "error_page" {
 variable "price_class" {
   description = "CloudFront distribution price class"
   default = "PriceClass_100"
+  validation {
+    condition = contains(["PriceClass_All", "PriceClass_100", "PriceClass_200"], var.price_class)
+    error_message = "Invalid price class."
+  }
 }
 
 variable "default_ttl" {
   description = "Default TTL for CloudFront caching"
   default = 86400
+  validation {
+    condition = var.default_ttl > 0
+    error_message = "TTL must be greater than zero."
+  }
 }
 
 variable "domain" {

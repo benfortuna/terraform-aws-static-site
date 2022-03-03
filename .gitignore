@@ -1,1 +1,3 @@
 /terraform-aws-static-site.iml
+.terraform
+.idea
