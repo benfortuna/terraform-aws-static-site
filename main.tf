@@ -25,18 +25,18 @@ resource "aws_cloudfront_distribution" "distribution" {
 
   aliases = var.aliases
 
-  origin = {
+  origin {
     domain_name = aws_s3_bucket.bucket.bucket_domain_name
     origin_id   = "S3-${aws_s3_bucket.bucket.bucket}"
   }
 
-  default_cache_behavior = {
+  default_cache_behavior {
     viewer_protocol_policy = "allow-all"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
 
-    forwarded_values = {
-      cookies = {
+    forwarded_values {
+      cookies {
         forward = "none"
       }
 
@@ -53,8 +53,8 @@ resource "aws_cloudfront_distribution" "distribution" {
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
 
-    forwarded_values = {
-      cookies = {
+    forwarded_values {
+      cookies {
         forward = "none"
       }
 
