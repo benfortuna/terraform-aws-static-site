@@ -67,11 +67,11 @@ resource "aws_cloudfront_distribution" "distribution" {
     default_ttl      = var.default_ttl
     max_ttl          = var.max_ttl
 
-    lambda_function_association {
-      event_type   = "viewer-request"
-      lambda_arn   = "arn:aws:lambda:us-east-1:${data.aws_caller_identity.current.account_id}:function:CloudFrontRewrite:1"
-      include_body = false
-    }
+#    lambda_function_association {
+#      event_type   = "viewer-request"
+#      lambda_arn   = "arn:aws:lambda:us-east-1:${data.aws_caller_identity.current.account_id}:function:CloudFrontRewrite:1"
+#      include_body = false
+#    }
   }
 
   logging_config {
