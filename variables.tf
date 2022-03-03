@@ -19,7 +19,7 @@ variable "default_root_object" {
 
 variable "error_page" {
   description = "File to return for 404 errors"
-  default     = "filenotfound.html"
+  default     = "/filenotfound.html"
 }
 
 variable "price_class" {
