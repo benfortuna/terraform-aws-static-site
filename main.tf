@@ -24,7 +24,7 @@ resource "aws_cloudfront_distribution" "distribution" {
     response_code      = 404
   }
 
-  aliases = var.aliases
+  aliases = var.domain != null ? var.aliases : null
 
   origin {
     domain_name = aws_s3_bucket.bucket.bucket_domain_name
