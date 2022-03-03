@@ -2,7 +2,7 @@ data "aws_caller_identity" "current" {}
 
 resource "aws_route53_zone" "zone" {
   count = var.domain != null ? 1 : 0
-  name = var.domain
+  name  = var.domain
 }
 
 resource "aws_s3_bucket" "bucket" {
@@ -46,6 +46,7 @@ resource "aws_cloudfront_distribution" "distribution" {
 
     target_origin_id = "S3-${aws_s3_bucket.bucket.bucket}"
     default_ttl      = var.default_ttl
+    max_ttl          = var.max_ttl
   }
 
   ordered_cache_behavior {
@@ -64,6 +65,7 @@ resource "aws_cloudfront_distribution" "distribution" {
 
     target_origin_id = "S3-${aws_s3_bucket.bucket.bucket}"
     default_ttl      = var.default_ttl
+    max_ttl          = var.max_ttl
 
     lambda_function_association {
       event_type   = "viewer-request"
@@ -89,7 +91,7 @@ resource "aws_cloudfront_distribution" "distribution" {
 }
 
 resource "aws_route53_record" "www" {
-  count = var.domain != null ? length(var.aliases) : 0
+  count   = var.domain != null ? length(var.aliases) : 0
   zone_id = aws_route53_zone.zone[0].zone_id
   name    = element(var.aliases, count.index)
   type    = "CNAME"
