@@ -1,5 +1,18 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_iam_policy_document" "bucket_policy" {
+  statement {
+    sid = "1"
+    effect = "Allow"
+    principals {
+      identifiers = [""]
+      type        = "AWS"
+    }
+    actions = ["s3:GetObject"]
+    resources = ["arn:aws:s3:::${var.bucket_name}/*"]
+  }
+}
+
 resource "aws_route53_zone" "zone" {
   count = var.domain != null ? 1 : 0
   name  = var.domain
@@ -9,8 +22,17 @@ resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
 }
 
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = aws_s3_bucket.bucket.id
+  policy = data.aws_iam_policy_document.bucket_policy.json
+}
+
 resource "aws_s3_bucket" "logs" {
   bucket = var.logs_bucket != null ? var.logs_bucket : format("%s-access-logs", data.aws_caller_identity.current.account_id)
+}
+
+resource "aws_cloudfront_origin_access_identity" "oai" {
+  comment = "access-identity-${aws_s3_bucket.bucket.bucket_domain_name}"
 }
 
 resource "aws_cloudfront_distribution" "distribution" {
@@ -29,6 +51,10 @@ resource "aws_cloudfront_distribution" "distribution" {
   origin {
     domain_name = aws_s3_bucket.bucket.bucket_domain_name
     origin_id   = "S3-${aws_s3_bucket.bucket.bucket}"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
+    }
   }
 
   default_cache_behavior {
