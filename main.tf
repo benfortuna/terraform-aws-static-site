@@ -1,6 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_route53_zone" "zone" {
+  count = var.domain != null ? 1 : 0
   name = var.domain
 }
 
@@ -88,14 +89,14 @@ resource "aws_cloudfront_distribution" "distribution" {
 }
 
 resource "aws_route53_record" "www" {
-  count   = length(var.aliases)
-  zone_id = aws_route53_zone.zone.zone_id
+  count = var.domain != null ? length(var.aliases) : 0
+  zone_id = aws_route53_zone.zone[0].zone_id
   name    = element(var.aliases, count.index)
   type    = "CNAME"
 
   alias {
     evaluate_target_health = false
     name                   = aws_cloudfront_distribution.distribution.id
-    zone_id                = aws_route53_zone.zone.zone_id
+    zone_id                = aws_route53_zone[0].zone.zone_id
   }
 }
